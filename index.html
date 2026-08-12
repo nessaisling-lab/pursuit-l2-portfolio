@@ -7,27 +7,21 @@
 <meta name="description" content="Four cycles, four shipped products. Pursuit AI-Native Builder, inaugural cohort.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@800&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
 <style>
 /* ─────────────────────────────────────────────────────────────────────────
-   Palette: Ziqpu's cream-and-brass editorial world, HouseCheck's deep green,
-   and the vermilion both already share (#CE422B in the deck, the terracotta
-   button in Ziqpu). Sampled from the real artefacts, not invented.
+   Page ground is HouseCheck's dark graphite. Every per-project colour below
+   was SAMPLED from that project's own screenshots in this repo (region-mode
+   pixel sampling), not chosen by eye. Values are recorded next to each theme.
    ───────────────────────────────────────────────────────────────────────── */
 :root{
-  --bg:#0E0E10;           /* HouseCheck's dark ground -- the product's own feel */
-  --bg-2:#1C1C1E;         /* HouseCheck card graphite */
-  --bg-3:#2A2A2D;
-  --ink:#F5F1E6;          /* Ziqpu's cream, now as TYPE rather than ground */
+  --bg:#0E0E10;
+  --bg-2:#1C1C1E;
+  --ink:#F5F1E6;
   --ink-2:rgba(245,241,230,.68);
   --ink-3:rgba(245,241,230,.44);
-  --paper:#F5F1E6;
-  --paper-2:#EDE7D8;
-  --brass:#B8893C;        /* Ziqpu's gold */
-  --vermilion:#CE422B;    /* the deck's accent, Ziqpu's button */
-  --green:#1D6A53;        /* HouseCheck deck green */
-  --green-lite:#5ECC79;   /* HouseCheck app green */
-  --slate:#1C1C1E;        /* HouseCheck card graphite */
+  --brass:#B8893C;
+  --vermilion:#CE422B;
   --rule:rgba(245,241,230,.13);
 }
 *{box-sizing:border-box}
@@ -37,90 +31,224 @@ body{
   font:400 17px/1.65 Inter,ui-sans-serif,system-ui,sans-serif;
 }
 .wrap{max-width:1280px;margin:0 auto;padding:0 clamp(20px,4vw,56px)}
-::selection{background:var(--vermilion);color:var(--paper)}
+::selection{background:var(--vermilion);color:#F5F1E6}
 
-/* ── masthead ─────────────────────────────────────────────── */
-header{padding:clamp(56px,11vw,110px) 0 clamp(28px,5vw,44px)}
+/* ── masthead ──────────────────────────────────────────────────────────────
+   Deliberately compact. Recruiters give a portfolio roughly fifteen seconds,
+   so the hero's only job is to get out of the way of the lead build card. The
+   Rust argument used to live here and now lives in its own section below,
+   where there is room to actually make it. */
+header{padding:clamp(34px,6vw,58px) 0 clamp(20px,3vw,30px);position:relative}
 .eyebrow{
   font:500 .72rem/1 "JetBrains Mono",monospace;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--brass);margin:0 0 22px
+  color:var(--brass);margin:0 0 16px
 }
 h1{
-  font:700 clamp(2.5rem,7.4vw,6rem)/.95 Fraunces,Georgia,serif;
-  margin:0 0 20px;letter-spacing:-.025em;text-wrap:balance
+  font:700 clamp(2.3rem,5.4vw,4.1rem)/1.0 Fraunces,Georgia,serif;
+  margin:0 0 14px;letter-spacing:-.025em;text-wrap:balance
 }
 h1 em{font-style:italic;color:var(--vermilion);margin-right:.14em}
-.deck{font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink-2);max-width:62ch;margin:0 0 34px}
+.deck{font-size:clamp(1rem,1.4vw,1.16rem);color:var(--ink-2);max-width:60ch;margin:0 0 22px}
 .deck b{color:var(--ink);font-weight:600}
 .meta{
-  display:flex;flex-wrap:wrap;gap:8px 26px;font:500 .84rem/1 "JetBrains Mono",monospace;
-  padding-top:24px;border-top:1px solid var(--rule)
+  display:flex;flex-wrap:wrap;gap:8px 26px;font:500 .82rem/1 "JetBrains Mono",monospace;
+  padding-top:18px;border-top:1px solid var(--rule)
 }
 .meta a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--brass);padding-bottom:2px}
-.meta a:focus-visible,.build:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+.meta a:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
 .meta a:hover{color:var(--vermilion);border-color:var(--vermilion)}
 .meta span{color:var(--ink-3)}
 
-/* ── section headings ─────────────────────────────────────── */
 h2.sec{
   font:500 .72rem/1 "JetBrains Mono",monospace;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--ink-3);margin:clamp(56px,9vw,88px) 0 26px;
-  padding-bottom:12px;border-bottom:1px solid var(--rule)
+  color:var(--ink-3);margin:clamp(26px,3.4vw,38px) 0 18px;
+  padding-bottom:11px;border-bottom:1px solid var(--rule)
 }
+h2.sec.far{margin-top:clamp(56px,9vw,88px)}
 
-/* ── build cards ──────────────────────────────────────────── */
+/* ── build cards ───────────────────────────────────────────────────────────
+   One frame, four skins. Geometry, grid, spacing and apparent type size are
+   identical across all four cards; only --surface, --accent, --chip and
+   --face change. Varying the container as well is what turns a set of themed
+   cards into a ransom note. */
 .builds{display:grid;gap:20px;grid-template-columns:1fr}
-@media(min-width:900px){.builds{grid-template-columns:repeat(2,1fr);gap:24px}}
-@media(min-width:900px){.build:first-child{grid-column:1/-1}}
-@media(min-width:900px){.build:first-child{display:grid;grid-template-columns:1fr 1.15fr;align-items:stretch}}
-@media(min-width:900px){.build:first-child .shot{border-top:0;border-left:1px solid var(--rule);height:100%;max-height:none;object-fit:cover;object-position:center}}
 .build{
-  display:grid;grid-template-columns:1fr;gap:0;text-decoration:none;color:inherit;
-  background:var(--bg-2);border:1px solid var(--rule);border-radius:4px;overflow:hidden;
+  /* theme contract -- every card overrides these four groups and nothing else */
+  --surface:var(--bg-2);
+  --card-ink:var(--ink);
+  --card-ink-2:var(--ink-2);
+  --accent:var(--brass);
+  --chip:rgba(245,241,230,.07);
+  --chip-ink:var(--ink-2);
+  --edge:var(--rule);
+  --face:Fraunces,Georgia,serif;
+  --face-size:1;          /* optical correction: grotesques read larger per em */
+  --face-track:-.015em;
+
+  display:grid;grid-template-columns:1fr;gap:0;align-content:start;
+  text-decoration:none;color:var(--card-ink);
+  background:var(--surface);border:1px solid var(--edge);border-radius:4px;overflow:hidden;
   transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease
 }
-.build:hover{transform:translateY(-3px);box-shadow:0 16px 44px rgba(0,0,0,.45);border-color:var(--brass)}
+.build:hover{transform:translateY(-3px);box-shadow:0 16px 44px rgba(0,0,0,.5);border-color:var(--accent)}
+.build:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .build .body{padding:26px clamp(20px,3.4vw,30px)}
 .build .top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
-.build h3{font:600 clamp(1.45rem,3.6vw,1.95rem)/1.1 Fraunces,Georgia,serif;margin:0;letter-spacing:-.015em}
-.num{font:500 .72rem/1 "JetBrains Mono",monospace;color:var(--brass);letter-spacing:.14em}
-.build p{margin:0;color:var(--ink-2);max-width:62ch}
+.build h3{
+  font-family:var(--face);font-weight:600;
+  font-size:calc(clamp(1.45rem,3.6vw,1.95rem) * var(--face-size));
+  line-height:1.1;margin:0;letter-spacing:var(--face-track);color:var(--card-ink)
+}
+.num{font:500 .72rem/1 "JetBrains Mono",monospace;color:var(--accent);letter-spacing:.14em}
+.flag{
+  font:500 .64rem/1 "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--surface);background:var(--accent);padding:5px 9px;border-radius:2px;align-self:center
+}
+.build p{margin:0;color:var(--card-ink-2);max-width:62ch}
 .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
 .tag{
   font:500 .7rem/1 "JetBrains Mono",monospace;letter-spacing:.04em;
-  padding:5px 10px;border-radius:2px;background:rgba(245,241,230,.07);color:var(--ink-2)
+  padding:5px 10px;border-radius:2px;background:var(--chip);color:var(--chip-ink)
 }
-.tag.live{background:rgba(94,204,121,.14);color:var(--green-lite)}
-.tag.live::before{content:"● ";color:var(--green-lite)}
-.shot{display:block;width:100%;border-top:1px solid var(--rule);background:#000;
-  /* portrait captures (SiteAssure is 420x885) would otherwise triple a card's height and
-     wreck the grid, so every shot is cropped to a consistent band from the top. */
-  max-height:320px;object-fit:cover;object-position:top center}
-.build{align-content:start}
+.tag.live::before{content:"● "}
+/* Portrait captures (SiteAssure is 420x885) would otherwise triple a card's
+   height and wreck the grid, so every shot is clipped to a consistent band. */
+.shotwrap{
+  display:block;overflow:hidden;max-height:320px;
+  border-top:1px solid var(--edge);
+  /* --shot-bg is that app's OWN page background, sampled from the GIF below the
+     chrome. Where a card's text column is taller than its image, this is what
+     fills the remainder -- using the card surface instead leaves a visible seam
+     where the screenshot stops. */
+  background:var(--shot-bg,var(--surface));
+  --chrome:0%;
+}
+/* --chrome is that GIF's Windows title bar (plus menu bar, where there is one)
+   measured in source pixels and divided by the GIF's WIDTH. Percentage margins
+   resolve against the containing block's width, never its height, so this crops
+   the identical number of source pixels at every viewport with no per-breakpoint
+   math and no re-encoding. The purple Windows chrome is not part of any of these
+   products and fights all four palettes; the stills in each cycle README keep
+   their full window, so the "real native app" evidence is not lost. */
+.shot{display:block;width:100%;height:auto;margin-top:calc(-1 * var(--chrome))}
+/* Responsive block sits AFTER the base .build rule on purpose. `.build--lead`
+   and `.build` have identical specificity (0,1,0) and a media query adds none,
+   so whichever is written last wins. Put this above and the lead card silently
+   loses its two-column layout -- which is exactly what happened once already. */
+/* Three tiers, chosen so the grid is never left with a hole. Four cards where
+   one spans the full width cannot fill two columns -- the odd card strands an
+   empty half-row, which is what a two-column grid did here. So: one column of
+   horizontal bands in the middle range, and a 1-up-plus-3-across grid only once
+   there is room for three real columns. */
+@media(min-width:780px){
+  /* every card becomes a horizontal band: text left, running app right */
+  .build{grid-template-columns:1fr 1.12fr;align-items:stretch;align-content:stretch}
+  .build .shotwrap{max-height:none;border-top:0;border-left:1px solid var(--edge)}
+}
+@media(min-width:1040px){
+  .builds{grid-template-columns:repeat(3,1fr);gap:24px}
+  .build--lead{grid-column:1/-1}
+  /* the other three go back to stacked, three across */
+  /* body row takes the slack so the three image bands start on one line even
+     though the three descriptions wrap to different numbers of lines */
+  .build:not(.build--lead){grid-template-columns:1fr;grid-template-rows:1fr auto;align-content:stretch}
+  .build:not(.build--lead) .shotwrap{
+    aspect-ratio:16/10;max-height:none;border-top:1px solid var(--edge);border-left:0
+  }
+}
 
-/* ── the argument ─────────────────────────────────────────── */
-.pull{
-  background:var(--paper);color:#1A1710;border-radius:4px;
-  padding:clamp(28px,4.4vw,48px);margin:0;
-  border-left:3px solid var(--vermilion)
+/* ── the four themes ──────────────────────────────────────────────────────
+   Hex values sampled from this repo's own screenshots. Where a sampled colour
+   fails contrast on its own ground, the fix is to copy the app's COMPONENT
+   (HouseCheck puts mint inside dark chips, never on the light ground) rather
+   than to invent a new colour. Ratios noted are against that card's surface. */
+
+/* HouseCheck -- ground #D6CDCD, chips #3B3B3D, mint #4BCDA7, coral #E7A99C */
+.t-housecheck{
+  --surface:#D6CDCD;
+  --card-ink:#272628;                    /* 9.5:1 */
+  --card-ink-2:rgba(39,38,40,.72);
+  --accent:#175443;                      /* deck green, darkened to 5.6:1 on #D6CDCD */
+  --chip:#3B3B3D;                        /* the app's own dark pill on light ground */
+  --chip-ink:#D6CDCD;
+  --edge:rgba(39,38,40,.16);
+  --face:Archivo,Inter,sans-serif;
+  --face-size:.94;--face-track:-.025em;
 }
-.pull h3{font:600 clamp(1.5rem,3.2vw,2rem)/1.2 Fraunces,Georgia,serif;margin:0 0 18px;color:#1A1710}
-.pull p{color:#4A4436;margin:0 0 14px;max-width:70ch}
+.t-housecheck .shotwrap{--chrome:8.026%;--shot-bg:#D9D8DA}  /* 61px chrome of 760 wide */
+.t-housecheck .tag.live{color:#4BCDA7}   /* true app mint, 5.6:1 inside the dark chip */
+
+/* Ziqpu -- paper #EEEADD, brass #8A6109, terracotta #B1452C */
+.t-ziqpu{
+  --surface:#EEEADD;
+  --card-ink:#2E2519;                    /* 12.3:1 */
+  --card-ink-2:rgba(46,37,25,.74);
+  --accent:#8A6109;                      /* 4.6:1 */
+  --chip:rgba(138,97,9,.13);
+  --chip-ink:#6E4E07;
+  --edge:rgba(46,37,25,.16);
+  --face:Fraunces,Georgia,serif;
+  --face-size:1;--face-track:-.012em;
+}
+.t-ziqpu:hover{border-color:#B1452C}
+.t-ziqpu .shotwrap{--chrome:4.605%;--shot-bg:#EBE0CA}       /* 35px title+menu of 760 wide */
+
+/* SiteAssure -- ground #15191D, cards #1E242A, amber #F4A41E, steel #5C8DB2 */
+.t-siteassure{
+  --surface:#15191D;
+  --card-ink:#F2F5F7;
+  --card-ink-2:rgba(242,245,247,.68);
+  --accent:#F4A41E;                      /* 8.5:1 */
+  --chip:rgba(244,164,30,.13);
+  --chip-ink:#F4A41E;
+  --edge:rgba(242,245,247,.14);
+  --face:"Source Serif 4",Georgia,serif;
+  --face-size:1;--face-track:-.008em;
+}
+.t-siteassure .shotwrap{--chrome:7.143%;--shot-bg:#020407} /* 30px title bar of 420 wide */
+
+/* Resona -- ground #040E11, header teal #042123, forest button #2D6A4F */
+.t-resona{
+  --surface:#071A18;
+  --card-ink:#EAF6F1;
+  --card-ink-2:rgba(234,246,241,.66);
+  --accent:#4FC79A;                      /* forest #2D6A4F lifted to 8.2:1 on dark */
+  --chip:rgba(45,106,79,.38);            /* the app's Get-started button colour */
+  --chip-ink:#9FE8CB;
+  --edge:rgba(234,246,241,.13);
+  --face:Manrope,Inter,sans-serif;
+  --face-size:.94;--face-track:-.03em;
+}
+.t-resona .shotwrap{--chrome:3.088%;--shot-bg:#041E21}      /* 21px title bar of 680 wide */
+
+/* ── argument blocks ──────────────────────────────────────────────────────
+   These carry a project's theme too, so the export story reads in HouseCheck's
+   world and the Rust argument reads in the page's own. */
+.pull{
+  background:var(--surface,var(--bg-2));color:var(--card-ink,var(--ink));border-radius:4px;
+  padding:clamp(28px,4.4vw,48px);margin:0;border-left:3px solid var(--accent,var(--brass))
+}
+.pull h3{
+  font-family:var(--face,Fraunces),Georgia,serif;font-weight:600;
+  font-size:calc(clamp(1.5rem,3.2vw,2rem) * var(--face-size,1));
+  line-height:1.2;margin:0 0 18px;color:var(--card-ink,var(--ink));letter-spacing:var(--face-track,-.015em)
+}
+.pull p{color:var(--card-ink-2,var(--ink-2));margin:0 0 14px;max-width:70ch}
 .pull p:last-child{margin:0}
 .pull code{
-  font:500 .82em/1.5 "JetBrains Mono",monospace;background:rgba(26,23,16,.08);
-  padding:2px 6px;border-radius:2px;color:#1A1710
+  font:500 .82em/1.5 "JetBrains Mono",monospace;background:var(--chip,rgba(245,241,230,.08));
+  padding:2px 6px;border-radius:2px;color:var(--chip-ink,var(--ink))
 }
-.pull .hi{color:var(--vermilion);font-weight:600}
+.pull .hi{color:var(--accent,var(--vermilion));font-weight:600}
 
-/* ── principles ───────────────────────────────────────────── */
+/* ── principles ───────────────────────────────────────────────────────── */
 .rules{display:grid;gap:0;border-top:1px solid var(--rule)}
 .rule{padding:24px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:1fr;gap:8px}
 .rule h4{font:600 1.12rem/1.3 Fraunces,Georgia,serif;margin:0;letter-spacing:-.01em}
 .rule p{margin:0;color:var(--ink-2);max-width:72ch}
 @media(min-width:720px){.rule{grid-template-columns:minmax(210px,1fr) 2.1fr;gap:28px;align-items:start}}
 
-/* ── stack ────────────────────────────────────────────────── */
+/* ── stack ────────────────────────────────────────────────────────────── */
 .stack{display:grid;gap:14px}
 .row{display:grid;grid-template-columns:1fr;gap:4px}
 @media(min-width:720px){.row{grid-template-columns:150px 1fr;gap:20px;align-items:baseline}}
@@ -132,13 +260,12 @@ footer{
   font:500 .8rem/1.7 "JetBrains Mono",monospace;color:var(--ink-3)
 }
 
-/* ── cursor-reactive shader field ─────────────────────────── */
+/* ── cursor-reactive shader field ─────────────────────────────────────── */
 #field{
   position:fixed;inset:0;width:100%;height:100%;z-index:-1;display:block;
   opacity:0;transition:opacity 1.1s ease
 }
 #field.on{opacity:1}
-header{position:relative}
 .wrap{position:relative;z-index:1}
 @media (prefers-reduced-motion:reduce){#field{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
@@ -152,9 +279,7 @@ header{position:relative}
   <p class="eyebrow">Pursuit AI-Native Builder · Inaugural cohort</p>
   <h1>Four cycles.<br>Four <em>shipped</em> products.</h1>
   <p class="deck"><b>Every one runs.</b> Two are live on the internet right now; two are desktop
-  applications you compile and launch. Most of the work is <b>Rust</b> — not because it is
-  fashionable, but because three of the four have a correctness property that a garbage collector
-  and a loose type system make harder to defend.</p>
+  applications you compile and launch.</p>
   <div class="meta">
     <span>Stan (Aisling) Leiva-Davila</span>
     <a href="https://github.com/nessaisling-lab">github.com/nessaisling-lab</a>
@@ -166,50 +291,50 @@ header{position:relative}
 <h2 class="sec">The builds</h2>
 <div class="builds">
 
-  <a class="build" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-4-housecheck">
+  <a class="build build--lead t-housecheck" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-4-housecheck">
     <div class="body">
-      <div class="top"><h3>HouseCheck</h3><span class="num">CYCLE 04</span></div>
+      <div class="top"><h3>HouseCheck</h3><span class="num">CYCLE 04</span><span class="flag">Start here</span></div>
       <p>Carfax for NYC apartments. Type an address, get a Building Health Card scored from public
       city data — and export a record a stranger can cryptographically verify.</p>
       <div class="tags"><span class="tag live">Live</span><span class="tag">Rust · axum</span><span class="tag">Ed25519</span><span class="tag">149 tests</span></div>
     </div>
-    <img class="shot" src="./cycle-4-housecheck/screenshots/00-workflow.gif" alt="HouseCheck: searching an address through to the building record" loading="lazy">
+    <div class="shotwrap"><img class="shot" src="./cycle-4-housecheck/screenshots/00-workflow.gif" alt="HouseCheck: searching an address through to the building record" loading="eager"></div>
   </a>
 
-  <a class="build" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-3-ziqpu">
+  <a class="build t-ziqpu" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-3-ziqpu">
     <div class="body">
       <div class="top"><h3>Ziqpu</h3><span class="num">CYCLE 03</span></div>
       <p>A consumer astrology decision tool with two visible agents — one measures, one interprets.
       The separation is the integrity guarantee, enforced by architecture rather than disclaimer.</p>
       <div class="tags"><span class="tag">Rust</span><span class="tag">Tool-calling</span><span class="tag">Offline ephemeris</span></div>
     </div>
-    <img class="shot" src="./cycle-3-ziqpu/screenshots/00-workflow.gif" alt="Ziqpu: welcome through to a resolved chart" loading="lazy">
+    <div class="shotwrap"><img class="shot" src="./cycle-3-ziqpu/screenshots/00-workflow.gif" alt="Ziqpu: welcome through to a resolved chart" loading="lazy"></div>
   </a>
 
-  <a class="build" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-2-siteassure">
+  <a class="build t-siteassure" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-2-siteassure">
     <div class="body">
       <div class="top"><h3>SiteAssure</h3><span class="num">CYCLE 02</span></div>
       <p>A tamper-evident, offline-first OSHA compliance logger driven by voice. Every create,
       amend and delete is chained and hash-verified — nothing is silently altered or removed.</p>
       <div class="tags"><span class="tag">Rust</span><span class="tag">Hash chain</span><span class="tag">3-OS CI</span></div>
     </div>
-    <img class="shot" src="./cycle-2-siteassure/screenshots/00-workflow.gif" alt="SiteAssure: speak it, record it, prove it" loading="lazy">
+    <div class="shotwrap"><img class="shot" src="./cycle-2-siteassure/screenshots/00-workflow.gif" alt="SiteAssure: speak it, record it, prove it" loading="lazy"></div>
   </a>
 
-  <a class="build" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-1-resona">
+  <a class="build t-resona" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-1-resona">
     <div class="body">
       <div class="top"><h3>Resona</h3><span class="num">CYCLE 01</span></div>
       <p>Privacy-first voice-to-text. 100% on-device via whisper.cpp — a property you can verify by
       unplugging the network and watching it keep working.</p>
       <div class="tags"><span class="tag">Rust · Tauri 2</span><span class="tag">whisper.cpp</span><span class="tag">On-device</span></div>
     </div>
-    <img class="shot" src="./cycle-1-resona/screenshots/00-workflow.gif" alt="Resona: launch through to model selection" loading="lazy">
+    <div class="shotwrap"><img class="shot" src="./cycle-1-resona/screenshots/00-workflow.gif" alt="Resona: launch through to model selection" loading="lazy"></div>
   </a>
 
 </div>
 
-<h2 class="sec">If you only read one thing</h2>
-<div class="pull">
+<h2 class="sec far">If you only read one thing</h2>
+<div class="pull t-housecheck">
   <h3>The export that found its own hole</h3>
   <p>A tenant lawyer can read a building's violations on any city website. What they cannot do is
   put that reading in front of a court, because a printout is unverifiable. HouseCheck's export
@@ -225,9 +350,8 @@ header{position:relative}
   published one”</em> while nothing published it.</p>
 </div>
 
-
-<h2 class="sec">Why Rust, specifically</h2>
-<div class="pull" style="border-left-color:var(--brass)">
+<h2 class="sec far">Why Rust, specifically</h2>
+<div class="pull">
   <h3>Three of the four have a property a type system can defend.</h3>
   <p>HouseCheck signs a document a court might rely on. SiteAssure keeps a safety log that has to
   stay tamper-evident. Resona promises that audio never leaves the machine. In each case the
@@ -245,7 +369,7 @@ header{position:relative}
   <div class="row"><dt>Discipline</dt><dd>149 tests · clippy clean · compile-time assertions where a comment would have drifted</dd></div>
 </dl>
 
-<h2 class="sec">How I work</h2>
+<h2 class="sec far">How I work</h2>
 <div class="rules">
   <div class="rule">
     <h4>Measure, don't estimate.</h4>
@@ -268,7 +392,7 @@ header{position:relative}
   </div>
 </div>
 
-<h2 class="sec">Stack</h2>
+<h2 class="sec far">Stack</h2>
 <dl class="stack">
   <div class="row"><dt>Rust</dt><dd>axum · rusqlite/SQLx · Tauri 2 · whisper-rs · ed25519-dalek · sha2</dd></div>
   <div class="row"><dt>Front end</dt><dd>TypeScript · React · Vite · Tailwind</dd></div>
@@ -279,7 +403,8 @@ header{position:relative}
 
 <footer>
   Pursuit AI-Native Builder — inaugural cohort · 600+ hours over seven months<br>
-  Palette sampled from HouseCheck's deck and Ziqpu's interface.
+  Each card carries its own project's palette and display face, sampled from that
+  project's screenshots in this repo. The frame around them never changes.
 </footer>
 
 </div>
@@ -288,7 +413,7 @@ header{position:relative}
 /* A domain-warped noise field in the page's own palette, nudged by the pointer.
    Raw WebGL rather than a 3D library: the whole effect is one fragment shader, so
    pulling in Three.js would cost ~600 KB to draw a rectangle. Degrades to the flat
-   cream background if WebGL is missing, and is removed entirely under
+   background if WebGL is missing, and is removed entirely under
    prefers-reduced-motion. */
 (function(){
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
