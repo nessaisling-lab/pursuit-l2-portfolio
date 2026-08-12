@@ -92,8 +92,30 @@ h2.sec.far{margin-top:clamp(56px,9vw,88px)}
 }
 .build:hover{transform:translateY(-3px);box-shadow:0 16px 44px rgba(0,0,0,.5);border-color:var(--accent)}
 .build:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.build .body{padding:26px clamp(20px,3.4vw,30px)}
-.build .top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+.build:focus-within{outline:2px solid var(--accent);outline-offset:3px}
+
+/* ── media ────────────────────────────────────────────────────────────────
+   Sized to the app's real shape, declared in Rust rather than guessed here.
+   Three of the four are portrait: SiteAssure is phone-shaped, Resona is a
+   responsive UI recorded at 500x940, and HouseCheck is mobile-first so its
+   content is a narrow column. Ziqpu is the only true desktop layout and gets
+   the full card width -- a wide video squeezed into a side column is
+   unreadable at any size. */
+.media{
+  background:var(--shot-bg,var(--surface));
+  display:flex;align-items:center;justify-content:center;
+  padding:18px;border-bottom:1px solid var(--edge)
+}
+/* A hairline bezel in the card's own edge colour, not a photoreal device body.
+   It exists only to make the portrait aspect read as deliberate; drawn phone
+   mockups are a template signal. */
+.bezel{border:1px solid var(--edge);border-radius:10px;overflow:hidden;line-height:0;max-width:100%}
+.shot{display:block;width:100%;height:auto}
+.media[data-media="portrait"] .bezel{width:min(230px,62%)}
+.media[data-media="landscape"] .bezel{width:100%}
+
+.build .panel{padding:24px clamp(18px,3vw,28px);display:flex;flex-direction:column}
+.build .top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
 .build h3{
   font-family:var(--face);font-weight:600;
   font-size:calc(clamp(1.45rem,3.6vw,1.95rem) * var(--face-size));
@@ -105,56 +127,88 @@ h2.sec.far{margin-top:clamp(56px,9vw,88px)}
   color:var(--surface);background:var(--accent);padding:5px 9px;border-radius:2px;align-self:center
 }
 .build p{margin:0;color:var(--card-ink-2);max-width:62ch}
+.title-link{color:inherit;text-decoration:none}
+.title-link:hover{color:var(--accent)}
+.title-link:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.stat{
+  font:500 .72rem/1.5 "JetBrains Mono",monospace;color:var(--accent);
+  margin:0 0 14px;letter-spacing:.02em
+}
+
+/* ── fact slides ──────────────────────────────────────────────────────────
+   Default state is EVERY slide visible and stacked. The pager script adds
+   data-paged to .builds, and all the collapsing rules below are scoped under
+   it -- so with no JS, a failed script, Reader mode, print or a crawler, the
+   full text is present. The pager is an enhancement; the document is the
+   source of truth. Slide 1 also stands alone by itself (enforced by a test in
+   content.rs), so nothing essential is ever behind a click. */
+.slides{display:grid;gap:18px}
+.slide h4{
+  font-family:var(--face);font-weight:600;font-size:.98rem;line-height:1.3;
+  margin:0 0 6px;color:var(--card-ink);letter-spacing:var(--face-track)
+}
+.slide p{margin:0;color:var(--card-ink-2)}
+.slide ul{margin:10px 0 0;padding-left:17px;color:var(--card-ink-2)}
+.slide li{margin:0 0 7px}
+.slide li:last-child{margin:0}
+.slide li::marker{color:var(--accent)}
+
+[data-paged] .slides{display:block;min-height:206px}
+[data-paged] .slide{display:none}
+[data-paged] .slide.is-active{display:block}
+
+.pager{display:none}
+[data-paged] .pager{display:flex;align-items:center;gap:10px;margin-top:18px}
+.pg,.dot{background:none;border:0;cursor:pointer;color:var(--card-ink-2);font-family:inherit}
+.pg{
+  font-size:1.25rem;line-height:1;padding:1px 9px 4px;
+  border:1px solid var(--edge);border-radius:3px
+}
+.pg:hover:not(:disabled){color:var(--accent);border-color:var(--accent)}
+.pg:disabled{opacity:.35;cursor:default}
+.pg:focus-visible,.dot:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.dots{display:flex;gap:7px;margin-right:auto}
+.dot{width:9px;height:9px;padding:0;border-radius:50%;background:var(--edge)}
+.dot[aria-current="true"]{background:var(--accent)}
+
 .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
 .tag{
   font:500 .7rem/1 "JetBrains Mono",monospace;letter-spacing:.04em;
   padding:5px 10px;border-radius:2px;background:var(--chip);color:var(--chip-ink)
 }
 .tag.live::before{content:"● "}
-/* Portrait captures (SiteAssure is 420x885) would otherwise triple a card's
-   height and wreck the grid, so every shot is clipped to a consistent band. */
-.shotwrap{
-  display:block;overflow:hidden;max-height:320px;
-  border-top:1px solid var(--edge);
-  /* --shot-bg is that app's OWN page background, sampled from the GIF below the
-     chrome. Where a card's text column is taller than its image, this is what
-     fills the remainder -- using the card surface instead leaves a visible seam
-     where the screenshot stops. */
-  background:var(--shot-bg,var(--surface));
-  --chrome:0%;
-}
-/* --chrome is that GIF's Windows title bar (plus menu bar, where there is one)
-   measured in source pixels and divided by the GIF's WIDTH. Percentage margins
-   resolve against the containing block's width, never its height, so this crops
-   the identical number of source pixels at every viewport with no per-breakpoint
-   math and no re-encoding. The purple Windows chrome is not part of any of these
-   products and fights all four palettes; the stills in each cycle README keep
-   their full window, so the "real native app" evidence is not lost. */
-.shot{display:block;width:100%;height:auto;margin-top:calc(-1 * var(--chrome))}
-/* Responsive block sits AFTER the base .build rule on purpose. `.build--lead`
-   and `.build` have identical specificity (0,1,0) and a media query adds none,
-   so whichever is written last wins. Put this above and the lead card silently
-   loses its two-column layout -- which is exactly what happened once already. */
-/* Three tiers, chosen so the grid is never left with a hole. Four cards where
-   one spans the full width cannot fill two columns -- the odd card strands an
-   empty half-row, which is what a two-column grid did here. So: one column of
-   horizontal bands in the middle range, and a 1-up-plus-3-across grid only once
-   there is room for three real columns. */
+/* Responsive block sits AFTER the base .build rules on purpose. Equal-specificity
+   selectors and media queries add nothing, so whichever is written last wins.
+   Putting this above once cost the lead card its two-column layout silently. */
 @media(min-width:780px){
-  /* every card becomes a horizontal band: text left, running app right */
-  .build{grid-template-columns:1fr 1.12fr;align-items:stretch;align-content:stretch}
-  .build .shotwrap{max-height:none;border-top:0;border-left:1px solid var(--edge)}
+  /* Cards take their natural height. Stretching them to match the tallest in the
+     row is what leaves a short video floating in a field of flat colour -- the
+     landscape card is ~2x the height of a portrait one, so a stretched row put
+     470px of empty --shot-bg under HouseCheck's video. */
+  .builds{align-items:start}
+  /* Portrait apps sit beside their facts. The video fills the column's full height
+     rather than sitting at a fixed width, so the media area is never partly empty. */
+  .build{grid-template-columns:auto 1fr;align-items:stretch}
+  .media{border-bottom:0;border-right:1px solid var(--edge)}
+  /* Each portrait bezel is widened to the aspect that lands its video at ~460px
+     tall, so all three fill their media area to within a couple of pixels and the
+     column still caps the video's size. A single shared width instead left
+     HouseCheck (0.62:1) 97px short of SiteAssure (0.47:1) -- a visible band of
+     flat colour under the shortest app. Letting height drive and width follow
+     inverts the problem: the video grows to natural size and crushes the panel. */
+  .media[data-media="portrait"]{padding:16px}
+  .media[data-media="portrait"] .bezel{width:var(--bezel-w,228px)}
+  /* Ziqpu is a desktop layout: it keeps the full card width and stacks. */
+  .build--wide{grid-template-columns:1fr}
+  .build--wide .media{border-right:0;border-bottom:1px solid var(--edge)}
+  .build--wide .media[data-media="landscape"] .bezel{width:100%}
 }
+/* Two columns, no full-width lead. Four cards where one spans the width cannot
+   fill two columns -- the odd card strands an empty half-row. A 2x2 grid is
+   hole-free at every width and gives each card room for its slides; HouseCheck
+   stays first-read by sitting top-left and carrying the only "Start here". */
 @media(min-width:1040px){
-  .builds{grid-template-columns:repeat(3,1fr);gap:24px}
-  .build--lead{grid-column:1/-1}
-  /* the other three go back to stacked, three across */
-  /* body row takes the slack so the three image bands start on one line even
-     though the three descriptions wrap to different numbers of lines */
-  .build:not(.build--lead){grid-template-columns:1fr;grid-template-rows:1fr auto;align-content:stretch}
-  .build:not(.build--lead) .shotwrap{
-    aspect-ratio:16/10;max-height:none;border-top:1px solid var(--edge);border-left:0
-  }
+  .builds{grid-template-columns:repeat(2,1fr);gap:24px}
 }
 
 /* ── the four themes ──────────────────────────────────────────────────────
@@ -176,7 +230,7 @@ h2.sec.far{margin-top:clamp(56px,9vw,88px)}
   --face:Archivo,Inter,sans-serif;
   --face-size:.94;--face-track:-.025em;
 }
-.t-housecheck .shotwrap{--chrome:8.026%;--shot-bg:#D9D8DA}
+.t-housecheck .media{--shot-bg:#D9D8DA;--bezel-w:246px}
 .t-housecheck .tag.live{color:#4BCDA7}   /* 5.63:1 inside the dark chip */
 
 .t-ziqpu{
@@ -190,7 +244,7 @@ h2.sec.far{margin-top:clamp(56px,9vw,88px)}
   --face:Fraunces,Georgia,serif;
   --face-size:1;--face-track:-.012em;
 }
-.t-ziqpu .shotwrap{--chrome:4.605%;--shot-bg:#EBE0CA}
+.t-ziqpu .media{--shot-bg:#EBE0CA;--bezel-w:551px}
 .t-ziqpu:hover{border-color:#B1452C}
 
 .t-siteassure{
@@ -204,7 +258,7 @@ h2.sec.far{margin-top:clamp(56px,9vw,88px)}
   --face:"Source Serif 4",Georgia,serif;
   --face-size:1;--face-track:-.008em;
 }
-.t-siteassure .shotwrap{--chrome:7.143%;--shot-bg:#020407}
+.t-siteassure .media{--shot-bg:#020407;--bezel-w:190px}
 
 .t-resona{
   --surface:#071A18;
@@ -217,7 +271,7 @@ h2.sec.far{margin-top:clamp(56px,9vw,88px)}
   --face:Manrope,Inter,sans-serif;
   --face-size:.94;--face-track:-.03em;
 }
-.t-resona .shotwrap{--chrome:3.088%;--shot-bg:#041E21}
+.t-resona .media{--shot-bg:#041E21;--bezel-w:213px}
 
 
 /* ── argument blocks ──────────────────────────────────────────────────────
@@ -273,7 +327,7 @@ footer{
 <body>
 <canvas id="field" aria-hidden="true"></canvas>
 <div class="wrap"><header><p class="eyebrow">Pursuit AI-Native Builder · Inaugural cohort</p><h1>Four cycles.<br/>Four <em>shipped</em> products.</h1><p class="deck"><b>Every one runs.</b> Two are live on the internet right now; two are desktop applications you compile
-                 and launch.</p><div class="meta"><span>Stan (Aisling) Leiva-Davila</span><a href="https://github.com/nessaisling-lab">github.com/nessaisling-lab</a><a href="https://linkedin.com/in/stan-leiva-davila">LinkedIn</a><a href="mailto:ness.aisling@gmail.com">ness.aisling@gmail.com</a></div></header><h2 class="sec">The builds</h2><div class="builds"><a class="build build--lead t-housecheck" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-4-housecheck"><div class="body"><div class="top"><h3>HouseCheck</h3><span class="num">CYCLE 04</span><span class="flag">Start here</span></div><p>Carfax for NYC apartments. Type an address, get a Building Health Card scored from public city data — and export a record a stranger can cryptographically verify.</p><div class="tags"><span class="tag live">Live</span><span class="tag">Rust · axum</span><span class="tag">Ed25519</span><span class="tag">149 tests</span></div></div><div class="shotwrap"><img class="shot" src="./cycle-4-housecheck/screenshots/00-workflow.gif" alt="HouseCheck: searching an address through to the building record" loading="eager"/></div></a><a class="build t-ziqpu" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-3-ziqpu"><div class="body"><div class="top"><h3>Ziqpu</h3><span class="num">CYCLE 03</span></div><p>A consumer astrology decision tool with two visible agents — one measures, one interprets. The separation is the integrity guarantee, enforced by architecture rather than disclaimer.</p><div class="tags"><span class="tag">Rust · Dioxus</span><span class="tag">Tool-calling</span><span class="tag">Offline ephemeris</span></div></div><div class="shotwrap"><img class="shot" src="./cycle-3-ziqpu/screenshots/00-workflow.gif" alt="Ziqpu: welcome through to a resolved chart" loading="lazy"/></div></a><a class="build t-siteassure" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-2-siteassure"><div class="body"><div class="top"><h3>SiteAssure</h3><span class="num">CYCLE 02</span></div><p>A tamper-evident, offline-first OSHA compliance logger driven by voice. Every create, amend and delete is chained and hash-verified — nothing is silently altered or removed.</p><div class="tags"><span class="tag">Rust</span><span class="tag">Hash chain</span><span class="tag">3-OS CI</span></div></div><div class="shotwrap"><img class="shot" src="./cycle-2-siteassure/screenshots/00-workflow.gif" alt="SiteAssure: speak it, record it, prove it" loading="lazy"/></div></a><a class="build t-resona" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-1-resona"><div class="body"><div class="top"><h3>Resona</h3><span class="num">CYCLE 01</span></div><p>Privacy-first voice-to-text. 100% on-device via whisper.cpp — a property you can verify by unplugging the network and watching it keep working.</p><div class="tags"><span class="tag">Rust · Tauri 2</span><span class="tag">whisper.cpp</span><span class="tag">On-device</span></div></div><div class="shotwrap"><img class="shot" src="./cycle-1-resona/screenshots/00-workflow.gif" alt="Resona: launch through to model selection" loading="lazy"/></div></a></div><h2 class="sec far">If you only read one thing</h2><div class="pull t-housecheck"><h3>The export that found its own hole</h3><p>A tenant lawyer can read a building&#39;s violations on any city website. What they
+                 and launch.</p><div class="meta"><span>Stan (Aisling) Leiva-Davila</span><a href="https://github.com/nessaisling-lab">github.com/nessaisling-lab</a><a href="https://linkedin.com/in/stan-leiva-davila">LinkedIn</a><a href="mailto:ness.aisling@gmail.com">ness.aisling@gmail.com</a></div></header><h2 class="sec">The builds</h2><div class="builds"><article class="build t-housecheck build--lead"><div class="media" data-media="portrait"><div class="bezel"><video class="shot" src="./cycle-4-housecheck/screenshots/workflow.mp4" poster="./cycle-4-housecheck/screenshots/workflow-poster.jpg" autoplay=true muted=true loop="true" playsinline=true preload="auto" aria-label="HouseCheck: searching an address through to a Building Health Card"></video></div></div><div class="panel"><div class="top"><h3><a class="title-link" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-4-housecheck">HouseCheck</a></h3><span class="num">CYCLE 04</span><span class="flag">Start here</span></div><p class="stat">250 buildings · 26,343 violations · 149 tests</p><div class="slides" role="group" aria-live="polite"><section class="slide" data-i="0"><h4>What it is</h4><p>Carfax for NYC apartments. Type an address, get a Building Health Card scored from public city data — and export a record a stranger can cryptographically verify.</p></section><section class="slide" data-i="1"><h4>How it works</h4><p>Six public datasets, one artifact, no database server.</p><ul><li>HPD violations, 311, PLUTO, DOB, DOHMH and Census ACS, ingested with completeness checks and block-compressed per building — measured 9.89×.</li><li>A read-only SQLite artifact baked into the Docker image: no database server, no connection pool, no cold-start query.</li><li>Search on the curated path answers in 137–157 ms warm.</li></ul></section><section class="slide" data-i="2"><h4>The hard part</h4><p>Signing the document turned out not to be enough.</p><ul><li>A forger who rewrites a row, recomputes the whole chain and signs it with their own keypair produces a document that verifies as intact — every check inside it passes, because it is internally consistent.</li><li>A row I rewrote to “NO VIOLATIONS OF ANY KIND AT THIS ADDRESS” passed cleanly.</li><li>Fixed by publishing the public key at a stable endpoint, so a reader has something independent to compare against. The same forgery is now rejected.</li></ul></section><section class="slide" data-i="3"><h4>What it doesn&#39;t do</h4><p>Stated here rather than discovered later.</p><ul><li>250 buildings — about 0.1% of the city.</li><li>Class I violations are excluded; 753 records were skipped at ingest and the card says so.</li><li>A signal, not a legal ruling. It does not give legal advice.</li></ul></section></div><div class="tags"><span class="tag live">Live</span><span class="tag">Rust · axum</span><span class="tag">Ed25519</span></div><nav class="pager" aria-label="HouseCheck detail"><button class="pg pg-prev" type="button" aria-label="Previous">‹</button><span class="dots"><button class="dot" type="button" data-go="0" aria-label="What it is"></button><button class="dot" type="button" data-go="1" aria-label="How it works"></button><button class="dot" type="button" data-go="2" aria-label="The hard part"></button><button class="dot" type="button" data-go="3" aria-label="What it doesn&#39;t do"></button></span><button class="pg pg-next" type="button" aria-label="Next">›</button></nav></div></article><article class="build t-ziqpu build--wide"><div class="media" data-media="landscape"><div class="bezel"><video class="shot" src="./cycle-3-ziqpu/screenshots/workflow.mp4" poster="./cycle-3-ziqpu/screenshots/workflow-poster.jpg" autoplay=true muted=true loop="true" playsinline=true preload="metadata" aria-label="Ziqpu: benchmarking the machine and recommending a local model"></video></div></div><div class="panel"><div class="top"><h3><a class="title-link" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-3-ziqpu">Ziqpu</a></h3><span class="num">CYCLE 03</span></div><p class="stat">Two agents · offline ephemeris · no keys, no network</p><div class="slides" role="group" aria-live="polite"><section class="slide" data-i="0"><h4>What it is</h4><p>A consumer astrology decision tool with two visible agents — one measures, one interprets. The separation is the integrity guarantee, enforced by architecture rather than by a disclaimer.</p></section><section class="slide" data-i="1"><h4>How it works</h4><p>Measurement and meaning are different programs.</p><ul><li>Hamun-ana computes positions and aspects and returns structured JSON only. It never interprets.</li><li>Ungasaga turns those measures into a reading in three beats — measured, meaning, reminder — and refuses to give advice.</li><li>The measurement sequence is fixed in code rather than chosen by the model, so a language model cannot influence the arithmetic.</li></ul></section><section class="slide" data-i="2"><h4>The hard part</h4><p>An unknown birth time is honest.</p><ul><li>If the hour is unknown the app withholds the Ascendant and Midheaven rather than guessing them — an absent answer stated, never invented.</li><li>It benchmarks the machine and recommends the largest quantisation that actually fits: on this laptop, Tier Medium → Qwen3 14B at Q6_K.</li><li>Nothing is downloaded until you say so.</li></ul></section><section class="slide" data-i="3"><h4>What it doesn&#39;t do</h4><p>For reflection and entertainment.</p><ul><li>Astrological interpretation is traditional and symbolic — not statements of fact, not predictions, not guarantees.</li><li>Not financial, medical, legal or psychological guidance. The interpreter is built to decline advice rather than to disclaim it in a footer.</li></ul></section></div><div class="tags"><span class="tag">Rust · Dioxus</span><span class="tag">Tool-calling</span><span class="tag">Local models</span></div><nav class="pager" aria-label="Ziqpu detail"><button class="pg pg-prev" type="button" aria-label="Previous">‹</button><span class="dots"><button class="dot" type="button" data-go="0" aria-label="What it is"></button><button class="dot" type="button" data-go="1" aria-label="How it works"></button><button class="dot" type="button" data-go="2" aria-label="The hard part"></button><button class="dot" type="button" data-go="3" aria-label="What it doesn&#39;t do"></button></span><button class="pg pg-next" type="button" aria-label="Next">›</button></nav></div></article><article class="build t-siteassure"><div class="media" data-media="portrait"><div class="bezel"><video class="shot" src="./cycle-2-siteassure/screenshots/workflow.mp4" poster="./cycle-2-siteassure/screenshots/workflow-poster.jpg" autoplay=true muted=true loop="true" playsinline=true preload="metadata" aria-label="SiteAssure: daily log, records, trade-risk dashboard and audit trail"></video></div></div><div class="panel"><div class="top"><h3><a class="title-link" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-2-siteassure">SiteAssure</a></h3><span class="num">CYCLE 02</span></div><p class="stat">18 commands, zero stubs · 100% audit integrity · 3-OS CI</p><div class="slides" role="group" aria-live="polite"><section class="slide" data-i="0"><h4>What it is</h4><p>A tamper-evident, offline-first OSHA compliance logger driven by voice. Every create, amend and delete is chained and hash-verified — nothing is silently altered or removed.</p></section><section class="slide" data-i="1"><h4>How it works</h4><p>A safety record is a legal document before it is anything else.</p><ul><li>An append-only log where each entry&#39;s hash includes the previous entry&#39;s hash, so one altered character invalidates everything after it.</li><li>Tampering is detectable by anyone holding the file — not only by whoever runs the server.</li><li>Egress hardened to an explicit allowlist rather than a kill-switch, so a new call site cannot quietly reach the internet by default.</li></ul></section><section class="slide" data-i="2"><h4>The hard part</h4><p>The audit log, read a second way, is a second product.</p><ul><li>Because every capture is already timestamped and chained, the trade-risk dashboard needs no additional data entry.</li><li>3 open flags, 100% audit integrity, 1m 48s average capture time, benchmarked against OSHA enforcement weights for NAICS 23 in the NY–Newark market.</li><li>This is the same hash chain HouseCheck&#39;s export uses two cycles later. It was proven here first, on OSHA records.</li></ul></section><section class="slide" data-i="3"><h4>What it doesn&#39;t do</h4><p>Feature-complete and uninstallable.</p><ul><li>There is no signed installer yet, so running it means building from source. That is the honest status and it is tracked as the next task.</li><li>Its upstream repo still describes only the voice-transcription clone it grew out of, so a visitor landing there never learns SiteAssure exists.</li></ul></section></div><div class="tags"><span class="tag">Rust</span><span class="tag">Hash chain</span><span class="tag">Offline first</span></div><nav class="pager" aria-label="SiteAssure detail"><button class="pg pg-prev" type="button" aria-label="Previous">‹</button><span class="dots"><button class="dot" type="button" data-go="0" aria-label="What it is"></button><button class="dot" type="button" data-go="1" aria-label="How it works"></button><button class="dot" type="button" data-go="2" aria-label="The hard part"></button><button class="dot" type="button" data-go="3" aria-label="What it doesn&#39;t do"></button></span><button class="pg pg-next" type="button" aria-label="Next">›</button></nav></div></article><article class="build t-resona"><div class="media" data-media="portrait"><div class="bezel"><video class="shot" src="./cycle-1-resona/screenshots/workflow.mp4" poster="./cycle-1-resona/screenshots/workflow-poster.jpg" autoplay=true muted=true loop="true" playsinline=true preload="metadata" aria-label="Resona: checking the machine and choosing a speech model size"></video></div></div><div class="panel"><div class="top"><h3><a class="title-link" href="https://github.com/nessaisling-lab/pursuit-l2-portfolio/tree/main/cycle-1-resona">Resona</a></h3><span class="num">CYCLE 01</span></div><p class="stat">100% on-device · one core, four GPU backends</p><div class="slides" role="group" aria-live="polite"><section class="slide" data-i="0"><h4>What it is</h4><p>Privacy-first voice-to-text. 100% on-device via whisper.cpp — a property you can verify by unplugging the network and watching it keep working.</p></section><section class="slide" data-i="1"><h4>How it works</h4><p>Dictation is the one input that is inherently sensitive.</p><ul><li>Microphone capture → voice-activity detection → incremental transcription, with results appearing as you speak rather than after you stop.</li><li>Tier gating is enforced in the Rust core rather than in the UI, so an entitlement check is not a frontend suggestion.</li><li>One codebase, four GPU backends — Tauri 2 builds every target from the same source.</li></ul></section><section class="slide" data-i="2"><h4>The hard part</h4><p>Making the privacy claim testable rather than promised.</p><ul><li>Every mainstream option streams your audio to someone else&#39;s server, and the privacy policy is the only thing standing between the recording and a training corpus.</li><li>Here the guarantee is checkable by anyone in ten seconds: disconnect the network and it still transcribes.</li><li>On first run it profiles the machine and recommends a model size rather than making the user guess between tiny and large.</li></ul></section><section class="slide" data-i="3"><h4>What it doesn&#39;t do</h4><p>One defect kept visible on purpose.</p><ul><li>The hardware probe reports 32041 GB RAM on a 32 GB machine — megabytes labelled as gigabytes.</li><li>It is documented in the cycle README rather than cropped out of the screenshot, because it is exactly the class of bug that survives by looking like a big impressive number rather than a wrong one.</li></ul></section></div><div class="tags"><span class="tag">Rust · Tauri 2</span><span class="tag">whisper.cpp</span><span class="tag">On-device</span></div><nav class="pager" aria-label="Resona detail"><button class="pg pg-prev" type="button" aria-label="Previous">‹</button><span class="dots"><button class="dot" type="button" data-go="0" aria-label="What it is"></button><button class="dot" type="button" data-go="1" aria-label="How it works"></button><button class="dot" type="button" data-go="2" aria-label="The hard part"></button><button class="dot" type="button" data-go="3" aria-label="What it doesn&#39;t do"></button></span><button class="pg pg-next" type="button" aria-label="Next">›</button></nav></div></article></div><h2 class="sec far">If you only read one thing</h2><div class="pull t-housecheck"><h3>The export that found its own hole</h3><p>A tenant lawyer can read a building&#39;s violations on any city website. What they
                  cannot do is put that reading in front of a court, because a printout is
                  unverifiable. HouseCheck&#39;s export carries an append-only hash chain and an Ed25519
                  signature, so opposing counsel can re-check it offline — without trusting us and
@@ -290,9 +344,81 @@ footer{
                  container with <span class="hi">no database server and no connection pool</span>; a desktop app that ships one binary; <span class="hi">149 tests and clippy-clean</span> on the current build, with correctness bugs re-measured across the whole dataset
                  rather than spot-checked. This page is the smallest example: its four card themes
                  are Rust values, and a <code>const</code> assertion refuses to compile any theme whose text falls below WCAG 4.5:1 on its
-                 own background.</p></div><dl class="stack" style="margin-top:26px"><div class="row"><dt>Backends</dt><dd>axum · rusqlite / SQLx · Tauri 2 · whisper-rs · cpal</dd></div><div class="row"><dt>Crypto</dt><dd>ed25519-dalek · sha2 — hash chains and offline signature verification</dd></div><div class="row"><dt>Discipline</dt><dd>149 tests · clippy clean · compile-time assertions where a comment would have drifted</dd></div></dl><h2 class="sec far">How I work</h2><div class="rules"><div class="rule"><h4>Measure, don&#39;t estimate.</h4><p>Figures in these repos are measured and say so. Anything derived is labelled derived; anything unverified says unverified. HouseCheck&#39;s backlog carries the rule in writing: an item with no reason is a wish, not a task.</p></div><div class="rule"><h4>Verify against production, not the repo.</h4><p>Nearly every real defect I found in the final week was invisible from inside the editor — a search box that answered a Manhattan address with a Brooklyn building, a failed lookup that silently kept the previous result on screen, an assistant that answered a different question than the one asked.</p></div><div class="rule"><h4>An absent answer is still an answer.</h4><p>Repeatedly the honest design has three states rather than two: signed / unsigned-but-intact / tampered. A repair-time median / “nothing has been closed” / genuinely no data. Collapsing the middle state is how software ends up stating something reassuring it has not earned.</p></div></div><h2 class="sec far">Stack</h2><dl class="stack" style=""><div class="row"><dt>Rust</dt><dd>axum · rusqlite/SQLx · Tauri 2 · Dioxus · whisper-rs · ed25519-dalek · sha2</dd></div><div class="row"><dt>Front end</dt><dd>TypeScript · React · Vite · Tailwind</dd></div><div class="row"><dt>Data</dt><dd>SQLite · DuckDB · NYC Open Data (Socrata) · US Census ACS</dd></div><div class="row"><dt>AI</dt><dd>LLM tool-calling with enforced grounding · structured outputs · agent guardrails</dd></div><div class="row"><dt>Ops</dt><dd>Docker · GitHub Actions (3-OS matrix) · Fly.io · Vercel</dd></div></dl><footer>Pursuit AI-Native Builder — inaugural cohort · 600+ hours over seven months<br/>Each card carries its own project&#39;s palette and display face, sampled from that
+                 own background.</p></div><dl class="stack" style="margin-top:26px"><div class="row"><dt>Backends</dt><dd>axum · rusqlite / SQLx · Tauri 2 · Dioxus · whisper-rs · cpal</dd></div><div class="row"><dt>Crypto</dt><dd>ed25519-dalek · sha2 — hash chains and offline signature verification</dd></div><div class="row"><dt>Discipline</dt><dd>149 tests · clippy clean · compile-time assertions where a comment would have drifted</dd></div></dl><h2 class="sec far">How I work</h2><div class="rules"><div class="rule"><h4>Measure, don&#39;t estimate.</h4><p>Figures in these repos are measured and say so. Anything derived is labelled derived; anything unverified says unverified. HouseCheck&#39;s backlog carries the rule in writing: an item with no reason is a wish, not a task.</p></div><div class="rule"><h4>Verify against production, not the repo.</h4><p>Nearly every real defect I found in the final week was invisible from inside the editor — a search box that answered a Manhattan address with a Brooklyn building, a failed lookup that silently kept the previous result on screen, an assistant that answered a different question than the one asked.</p></div><div class="rule"><h4>An absent answer is still an answer.</h4><p>Repeatedly the honest design has three states rather than two: signed / unsigned-but-intact / tampered. A repair-time median / “nothing has been closed” / genuinely no data. Collapsing the middle state is how software ends up stating something reassuring it has not earned.</p></div></div><h2 class="sec far">Stack</h2><dl class="stack" style=""><div class="row"><dt>Rust</dt><dd>axum · rusqlite/SQLx · Tauri 2 · Dioxus · whisper-rs · ed25519-dalek · sha2</dd></div><div class="row"><dt>Front end</dt><dd>TypeScript · React · Vite · Tailwind</dd></div><div class="row"><dt>Data</dt><dd>SQLite · DuckDB · NYC Open Data (Socrata) · US Census ACS</dd></div><div class="row"><dt>AI</dt><dd>LLM tool-calling with enforced grounding · structured outputs · agent guardrails</dd></div><div class="row"><dt>Ops</dt><dd>Docker · GitHub Actions (3-OS matrix) · Fly.io · Vercel</dd></div></dl><footer>Pursuit AI-Native Builder — inaugural cohort · 600+ hours over seven months<br/>Each card carries its own project&#39;s palette and display face, sampled from that
                  project&#39;s screenshots in this repo. The frame around them never changes. This page
                  is rendered from Rust by <code>site/</code> — Dioxus RSX in, static HTML out, no WASM and no hydration.</footer></div>
+<script>
+/* Collapses each card's stacked fact slides into a pager.
+ *
+ * The HTML ships every slide visible. This script is the ONLY thing that hides
+ * any of them, and every hiding rule in the stylesheet is scoped under the
+ * `data-paged` attribute set below. So a crawler, a printer, Reader mode, a
+ * scripting-off screen reader, or a thrown exception in this file all leave the
+ * full text on the page. The pager is an enhancement; the document is the truth.
+ *
+ * Slide 1 is written to stand alone (enforced by a test in content.rs), so a
+ * visitor who never presses anything still gets the whole claim. */
+(function () {
+  var wrap = document.querySelector('.builds');
+  if (!wrap) return;
+
+  var cards = [].slice.call(document.querySelectorAll('.build'));
+  if (!cards.length) return;
+
+  cards.forEach(function (card) {
+    var slides = [].slice.call(card.querySelectorAll('.slide'));
+    var dots = [].slice.call(card.querySelectorAll('.dot'));
+    var prev = card.querySelector('.pg-prev');
+    var next = card.querySelector('.pg-next');
+    if (slides.length < 2 || !prev || !next) return;
+
+    var at = 0;
+
+    function show(i) {
+      at = Math.max(0, Math.min(slides.length - 1, i));
+      slides.forEach(function (s, n) { s.classList.toggle('is-active', n === at); });
+      dots.forEach(function (d, n) {
+        if (n === at) { d.setAttribute('aria-current', 'true'); }
+        else { d.removeAttribute('aria-current'); }
+      });
+      // Ends are disabled rather than wrapped: wrapping from the last slide back
+      // to the claim reads as a glitch, and there is no progress cue to explain it.
+      prev.disabled = at === 0;
+      next.disabled = at === slides.length - 1;
+    }
+
+    prev.addEventListener('click', function () { show(at - 1); });
+    next.addEventListener('click', function () { show(at + 1); });
+    dots.forEach(function (d, n) {
+      d.addEventListener('click', function () { show(n); });
+    });
+
+    // Arrow keys page only while focus is inside this card, so they never hijack
+    // scrolling for someone reading the rest of the page.
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { show(at - 1); e.preventDefault(); }
+      else if (e.key === 'ArrowRight') { show(at + 1); e.preventDefault(); }
+    });
+
+    show(0);
+  });
+
+  wrap.setAttribute('data-paged', '');
+
+  /* Autoplay is a preference, not a given. Under prefers-reduced-motion the
+     poster frame stands in and the video gains its own controls, so the content
+     is still reachable without anything moving on its own. */
+  var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (still) {
+    [].slice.call(document.querySelectorAll('video.shot')).forEach(function (v) {
+      v.autoplay = false;
+      v.controls = true;
+      v.pause();
+    });
+  }
+})();
+
+</script>
 <script>
 /* A domain-warped noise field in the page's own palette, nudged by the pointer.
    Raw WebGL rather than a 3D library: the whole effect is one fragment shader, so

@@ -81,8 +81,30 @@ h2.sec.far{margin-top:clamp(56px,9vw,88px)}
 }
 .build:hover{transform:translateY(-3px);box-shadow:0 16px 44px rgba(0,0,0,.5);border-color:var(--accent)}
 .build:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.build .body{padding:26px clamp(20px,3.4vw,30px)}
-.build .top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+.build:focus-within{outline:2px solid var(--accent);outline-offset:3px}
+
+/* ── media ────────────────────────────────────────────────────────────────
+   Sized to the app's real shape, declared in Rust rather than guessed here.
+   Three of the four are portrait: SiteAssure is phone-shaped, Resona is a
+   responsive UI recorded at 500x940, and HouseCheck is mobile-first so its
+   content is a narrow column. Ziqpu is the only true desktop layout and gets
+   the full card width -- a wide video squeezed into a side column is
+   unreadable at any size. */
+.media{
+  background:var(--shot-bg,var(--surface));
+  display:flex;align-items:center;justify-content:center;
+  padding:18px;border-bottom:1px solid var(--edge)
+}
+/* A hairline bezel in the card's own edge colour, not a photoreal device body.
+   It exists only to make the portrait aspect read as deliberate; drawn phone
+   mockups are a template signal. */
+.bezel{border:1px solid var(--edge);border-radius:10px;overflow:hidden;line-height:0;max-width:100%}
+.shot{display:block;width:100%;height:auto}
+.media[data-media="portrait"] .bezel{width:min(230px,62%)}
+.media[data-media="landscape"] .bezel{width:100%}
+
+.build .panel{padding:24px clamp(18px,3vw,28px);display:flex;flex-direction:column}
+.build .top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
 .build h3{
   font-family:var(--face);font-weight:600;
   font-size:calc(clamp(1.45rem,3.6vw,1.95rem) * var(--face-size));
@@ -94,56 +116,88 @@ h2.sec.far{margin-top:clamp(56px,9vw,88px)}
   color:var(--surface);background:var(--accent);padding:5px 9px;border-radius:2px;align-self:center
 }
 .build p{margin:0;color:var(--card-ink-2);max-width:62ch}
+.title-link{color:inherit;text-decoration:none}
+.title-link:hover{color:var(--accent)}
+.title-link:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.stat{
+  font:500 .72rem/1.5 "JetBrains Mono",monospace;color:var(--accent);
+  margin:0 0 14px;letter-spacing:.02em
+}
+
+/* ── fact slides ──────────────────────────────────────────────────────────
+   Default state is EVERY slide visible and stacked. The pager script adds
+   data-paged to .builds, and all the collapsing rules below are scoped under
+   it -- so with no JS, a failed script, Reader mode, print or a crawler, the
+   full text is present. The pager is an enhancement; the document is the
+   source of truth. Slide 1 also stands alone by itself (enforced by a test in
+   content.rs), so nothing essential is ever behind a click. */
+.slides{display:grid;gap:18px}
+.slide h4{
+  font-family:var(--face);font-weight:600;font-size:.98rem;line-height:1.3;
+  margin:0 0 6px;color:var(--card-ink);letter-spacing:var(--face-track)
+}
+.slide p{margin:0;color:var(--card-ink-2)}
+.slide ul{margin:10px 0 0;padding-left:17px;color:var(--card-ink-2)}
+.slide li{margin:0 0 7px}
+.slide li:last-child{margin:0}
+.slide li::marker{color:var(--accent)}
+
+[data-paged] .slides{display:block;min-height:206px}
+[data-paged] .slide{display:none}
+[data-paged] .slide.is-active{display:block}
+
+.pager{display:none}
+[data-paged] .pager{display:flex;align-items:center;gap:10px;margin-top:18px}
+.pg,.dot{background:none;border:0;cursor:pointer;color:var(--card-ink-2);font-family:inherit}
+.pg{
+  font-size:1.25rem;line-height:1;padding:1px 9px 4px;
+  border:1px solid var(--edge);border-radius:3px
+}
+.pg:hover:not(:disabled){color:var(--accent);border-color:var(--accent)}
+.pg:disabled{opacity:.35;cursor:default}
+.pg:focus-visible,.dot:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.dots{display:flex;gap:7px;margin-right:auto}
+.dot{width:9px;height:9px;padding:0;border-radius:50%;background:var(--edge)}
+.dot[aria-current="true"]{background:var(--accent)}
+
 .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
 .tag{
   font:500 .7rem/1 "JetBrains Mono",monospace;letter-spacing:.04em;
   padding:5px 10px;border-radius:2px;background:var(--chip);color:var(--chip-ink)
 }
 .tag.live::before{content:"● "}
-/* Portrait captures (SiteAssure is 420x885) would otherwise triple a card's
-   height and wreck the grid, so every shot is clipped to a consistent band. */
-.shotwrap{
-  display:block;overflow:hidden;max-height:320px;
-  border-top:1px solid var(--edge);
-  /* --shot-bg is that app's OWN page background, sampled from the GIF below the
-     chrome. Where a card's text column is taller than its image, this is what
-     fills the remainder -- using the card surface instead leaves a visible seam
-     where the screenshot stops. */
-  background:var(--shot-bg,var(--surface));
-  --chrome:0%;
-}
-/* --chrome is that GIF's Windows title bar (plus menu bar, where there is one)
-   measured in source pixels and divided by the GIF's WIDTH. Percentage margins
-   resolve against the containing block's width, never its height, so this crops
-   the identical number of source pixels at every viewport with no per-breakpoint
-   math and no re-encoding. The purple Windows chrome is not part of any of these
-   products and fights all four palettes; the stills in each cycle README keep
-   their full window, so the "real native app" evidence is not lost. */
-.shot{display:block;width:100%;height:auto;margin-top:calc(-1 * var(--chrome))}
-/* Responsive block sits AFTER the base .build rule on purpose. `.build--lead`
-   and `.build` have identical specificity (0,1,0) and a media query adds none,
-   so whichever is written last wins. Put this above and the lead card silently
-   loses its two-column layout -- which is exactly what happened once already. */
-/* Three tiers, chosen so the grid is never left with a hole. Four cards where
-   one spans the full width cannot fill two columns -- the odd card strands an
-   empty half-row, which is what a two-column grid did here. So: one column of
-   horizontal bands in the middle range, and a 1-up-plus-3-across grid only once
-   there is room for three real columns. */
+/* Responsive block sits AFTER the base .build rules on purpose. Equal-specificity
+   selectors and media queries add nothing, so whichever is written last wins.
+   Putting this above once cost the lead card its two-column layout silently. */
 @media(min-width:780px){
-  /* every card becomes a horizontal band: text left, running app right */
-  .build{grid-template-columns:1fr 1.12fr;align-items:stretch;align-content:stretch}
-  .build .shotwrap{max-height:none;border-top:0;border-left:1px solid var(--edge)}
+  /* Cards take their natural height. Stretching them to match the tallest in the
+     row is what leaves a short video floating in a field of flat colour -- the
+     landscape card is ~2x the height of a portrait one, so a stretched row put
+     470px of empty --shot-bg under HouseCheck's video. */
+  .builds{align-items:start}
+  /* Portrait apps sit beside their facts. The video fills the column's full height
+     rather than sitting at a fixed width, so the media area is never partly empty. */
+  .build{grid-template-columns:auto 1fr;align-items:stretch}
+  .media{border-bottom:0;border-right:1px solid var(--edge)}
+  /* Each portrait bezel is widened to the aspect that lands its video at ~460px
+     tall, so all three fill their media area to within a couple of pixels and the
+     column still caps the video's size. A single shared width instead left
+     HouseCheck (0.62:1) 97px short of SiteAssure (0.47:1) -- a visible band of
+     flat colour under the shortest app. Letting height drive and width follow
+     inverts the problem: the video grows to natural size and crushes the panel. */
+  .media[data-media="portrait"]{padding:16px}
+  .media[data-media="portrait"] .bezel{width:var(--bezel-w,228px)}
+  /* Ziqpu is a desktop layout: it keeps the full card width and stacks. */
+  .build--wide{grid-template-columns:1fr}
+  .build--wide .media{border-right:0;border-bottom:1px solid var(--edge)}
+  .build--wide .media[data-media="landscape"] .bezel{width:100%}
 }
+/* Two columns, no full-width lead. Four cards where one spans the width cannot
+   fill two columns -- the odd card strands an empty half-row. A 2x2 grid is
+   hole-free at every width and gives each card room for its slides; HouseCheck
+   stays first-read by sitting top-left and carrying the only "Start here". */
 @media(min-width:1040px){
-  .builds{grid-template-columns:repeat(3,1fr);gap:24px}
-  .build--lead{grid-column:1/-1}
-  /* the other three go back to stacked, three across */
-  /* body row takes the slack so the three image bands start on one line even
-     though the three descriptions wrap to different numbers of lines */
-  .build:not(.build--lead){grid-template-columns:1fr;grid-template-rows:1fr auto;align-content:stretch}
-  .build:not(.build--lead) .shotwrap{
-    aspect-ratio:16/10;max-height:none;border-top:1px solid var(--edge);border-left:0
-  }
+  .builds{grid-template-columns:repeat(2,1fr);gap:24px}
 }
 
 /*@THEMES@*/

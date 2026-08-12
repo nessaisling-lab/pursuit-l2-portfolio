@@ -120,6 +120,9 @@ pub struct Theme {
     /// That app's own page background, sampled below the chrome, so a card whose text
     /// column runs taller than its screenshot has no visible seam.
     pub shot_bg: Rgb,
+    /// Width divided by height of that project's recording, measured from the asset.
+    /// Used to widen the bezel so every portrait video lands at the same height.
+    pub video_aspect: f64,
     pub hover: Option<Rgb>,
 }
 
@@ -138,6 +141,7 @@ pub const HOUSECHECK: Theme = Theme {
     face_track: "-.025em",
     chrome_pct: "8.026%",
     shot_bg: Rgb(0xD9, 0xD8, 0xDA),
+    video_aspect: 440.0 / 714.0,
     hover: None,
 };
 
@@ -156,6 +160,7 @@ pub const ZIQPU: Theme = Theme {
     face_track: "-.012em",
     chrome_pct: "4.605%",
     shot_bg: Rgb(0xEB, 0xE0, 0xCA),
+    video_aspect: 1100.0 / 798.0,
     hover: Some(Rgb(0xB1, 0x45, 0x2C)),
 };
 
@@ -174,6 +179,7 @@ pub const SITEASSURE: Theme = Theme {
     face_track: "-.008em",
     chrome_pct: "7.143%",
     shot_bg: Rgb(0x02, 0x04, 0x07),
+    video_aspect: 436.0 / 918.0,
     hover: None,
 };
 
@@ -192,6 +198,7 @@ pub const RESONA: Theme = Theme {
     face_track: "-.03em",
     chrome_pct: "3.088%",
     shot_bg: Rgb(0x04, 0x1E, 0x21),
+    video_aspect: 500.0 / 940.0,
     hover: None,
 };
 

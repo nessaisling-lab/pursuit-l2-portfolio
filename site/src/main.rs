@@ -17,6 +17,7 @@ use theme::*;
 
 const STYLE: &str = include_str!("../assets/style.css");
 const FIELD_JS: &str = include_str!("../assets/field.js");
+const PAGER_JS: &str = include_str!("../assets/pager.js");
 const FONTS: &str = "https://fonts.googleapis.com/css2?family=Archivo:wght@700\
 &family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700\
 &family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500\
@@ -42,6 +43,7 @@ fn main() -> std::io::Result<()> {
          <body>\n\
          <canvas id=\"field\" aria-hidden=\"true\"></canvas>\n\
          {body}\n\
+         <script>\n{PAGER_JS}\n</script>\n\
          <script>\n{FIELD_JS}\n</script>\n\
          </body>\n\
          </html>\n"
@@ -58,6 +60,14 @@ fn main() -> std::io::Result<()> {
     );
     Ok(())
 }
+
+/// Height every portrait recording is sized to fill, in CSS pixels. The bezel width
+/// for each app is derived from this and that app's measured aspect, so three videos
+/// with different shapes still land on one horizontal rhythm.
+/// 400 rather than 460: at two columns on a 1440px viewport a card is ~570px wide, and
+/// a 283px bezel left HouseCheck's panel at 254px — narrow enough that the text wrapped
+/// into a taller column than its own video, which put the empty band back.
+const MEDIA_TARGET_H: f64 = 400.0;
 
 /// Emits the per-theme custom-property blocks.
 ///
@@ -79,6 +89,9 @@ fn themes_css() -> String {
     for t in THEMES {
         let ink_ratio = contrast_x100(t.ink, t.surface) as f64 / 100.0;
         let accent_ratio = contrast_x100(t.accent, t.surface) as f64 / 100.0;
+        // Width that lands this app's recording at MEDIA_TARGET_H, from the real asset
+        // aspect rather than eyeballed, so every portrait video fills to one height.
+        let bezel = (MEDIA_TARGET_H * t.video_aspect).round() as i32;
         s.push_str(&format!(
             "\n.t-{slug}{{\n\
              \x20 --surface:{surface};\n\
@@ -91,7 +104,7 @@ fn themes_css() -> String {
              \x20 --face:{face};\n\
              \x20 --face-size:{fsize};--face-track:{ftrack};\n\
              }}\n\
-             .t-{slug} .shotwrap{{--chrome:{chrome};--shot-bg:{shot_bg}}}\n",
+             .t-{slug} .media{{--shot-bg:{shot_bg};--bezel-w:{bezel}px}}\n",
             slug = t.slug,
             surface = t.surface.hex(),
             ink = t.ink.hex(),
@@ -103,7 +116,6 @@ fn themes_css() -> String {
             face = t.face,
             fsize = t.face_size,
             ftrack = t.face_track,
-            chrome = t.chrome_pct,
             shot_bg = t.shot_bg.hex(),
         ));
         if let Some(live) = t.live_ink {
@@ -196,33 +208,92 @@ fn Masthead() -> Element {
 
 #[component]
 fn BuildCard(b: &'static Build) -> Element {
+    let shape = match b.media {
+        Media::Portrait => "portrait",
+        Media::Landscape => "landscape",
+    };
     let mut class = format!("build t-{}", b.theme.slug);
     if b.lead {
-        class = format!("build build--lead t-{}", b.theme.slug);
+        class.push_str(" build--lead");
     }
+    // A landscape recording keeps the full card width and stacks; squeezed into the
+    // side column it would be unreadable at any size.
+    if matches!(b.media, Media::Landscape) {
+        class.push_str(" build--wide");
+    }
+
     rsx! {
-        a { class: "{class}", href: "{href(b)}",
-            div { class: "body",
+        // The card is an article, not a link. Wrapping a pager in an <a> would mean every
+        // "next" click also navigated away, and suppressing that with preventDefault is a
+        // fight you lose on keyboard and middle-click. The title carries the link instead.
+        article { class: "{class}",
+            div { class: "media", "data-media": "{shape}",
+                div { class: "bezel",
+                    video {
+                        class: "shot",
+                        src: "{b.video}",
+                        poster: "{b.poster}",
+                        autoplay: true,
+                        muted: true,
+                        "loop": "true",
+                        playsinline: true,
+                        preload: if b.lead { "auto" } else { "metadata" },
+                        "aria-label": "{b.alt}",
+                    }
+                }
+            }
+            div { class: "panel",
                 div { class: "top",
-                    h3 { "{b.name}" }
+                    h3 { a { class: "title-link", href: "{href(b)}", "{b.name}" } }
                     span { class: "num", "{b.cycle}" }
                     if let Some(f) = b.flag {
                         span { class: "flag", "{f}" }
                     }
                 }
-                p { "{b.blurb}" }
+                p { class: "stat", "{b.stat}" }
+
+                // Every slide is rendered visible. The pager script collapses them on load,
+                // so crawlers, print, Reader mode and a scripting-off screen reader all get
+                // the full text, and a JS failure degrades to a longer card rather than a
+                // blank one.
+                div { class: "slides", role: "group", "aria-live": "polite",
+                    for (i, s) in b.slides.iter().enumerate() {
+                        section {
+                            class: "slide",
+                            "data-i": "{i}",
+                            h4 { "{s.title}" }
+                            p { "{s.lead}" }
+                            if !s.points.is_empty() {
+                                ul {
+                                    for pt in s.points {
+                                        li { "{pt}" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 div { class: "tags",
                     for t in b.tags {
                         span { class: if t.live { "tag live" } else { "tag" }, "{t.label}" }
                     }
                 }
-            }
-            div { class: "shotwrap",
-                img {
-                    class: "shot",
-                    src: "{b.shot}",
-                    alt: "{b.alt}",
-                    loading: if b.lead { "eager" } else { "lazy" },
+
+                // Inert until the script upgrades it; hidden entirely without JS.
+                nav { class: "pager", "aria-label": "{b.name} detail",
+                    button { class: "pg pg-prev", "type": "button", "aria-label": "Previous", "‹" }
+                    span { class: "dots",
+                        for (i, s) in b.slides.iter().enumerate() {
+                            button {
+                                class: "dot",
+                                "type": "button",
+                                "data-go": "{i}",
+                                "aria-label": "{s.title}",
+                            }
+                        }
+                    }
+                    button { class: "pg pg-next", "type": "button", "aria-label": "Next", "›" }
                 }
             }
         }
