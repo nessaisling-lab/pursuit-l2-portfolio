@@ -5,7 +5,10 @@ and file transcription, entirely on-device via whisper.cpp.
 
 **[Source](https://github.com/nessaisling-lab/L2-Project-Resona)**
 
-![Resona](./screenshots/01-main.png)
+![Resona: launch to model selection](./screenshots/00-workflow.gif)
+
+![Resona, installed](./screenshots/02-installed.png)
+![Resona picks a model for your hardware](./screenshots/03-model-picker.png)
 
 ---
 
@@ -29,6 +32,10 @@ machine — a property you can verify by unplugging the network and watching it 
 - **Grammar review pass** — local rule-based cleanup, with an AI hook behind the paid tier
 - **Tier gating enforced in the Rust core**, not in the UI, so entitlement checks are not a
   frontend suggestion
+- **Hardware-aware model selection** — on first run it profiles the machine (architecture, RAM,
+  core count, GPU) and recommends a whisper model size, rather than making the user guess between
+  tiny and large
+- **YouTube import** — paste a URL, yt-dlp fetches the audio locally, transcription stays offline
 - **One codebase, four GPU backends** — the Rust core carries straight to mobile, since Tauri 2
   builds every target from the same source
 
@@ -53,10 +60,12 @@ Rust · Tauri 2 · whisper-rs (whisper.cpp) · cpal · React · TypeScript
 
 ## Status
 
-Feature-complete and **uninstallable** — no signed release build yet, so running it means
-compiling from source with a C toolchain and CMake. Same honest wall as Cycle 2.
+**Installable and installed.** `v0.2.0-beta.29` from
+[the release page](https://github.com/aislingld-pursuit/L2-Clone-Prodject/releases) installs and
+runs; the screenshots above are that build on Windows, not a mockup or a dev server. The
+unsigned-installer caveat that applies to Cycle 2 does not apply here.
 
-*The screenshot above is the real interface, served from the project's built `dist/`. Because
-Tauri renders its UI as a web view, the frontend runs in a browser without the Rust core
-attached — which is enough to show the interface honestly, and is why this shot exists without
-a 30-minute whisper.cpp compile.*
+**One defect visible in the shot above, and it is worth keeping:** the hardware probe reports
+`32041 GB RAM` on a 32 GB machine — megabytes labelled as gigabytes. It changes nothing about the
+recommendation it makes, and it is exactly the class of bug that survives because it looks like
+a big impressive number rather than a wrong one.
