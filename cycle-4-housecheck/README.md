@@ -5,6 +5,8 @@ city data, and export a record a stranger can cryptographically verify.
 
 **[Live demo](https://housecheck-wine.vercel.app)** · **[Source](https://github.com/nessaisling-lab/housecheck)**
 
+![HouseCheck: search to record](./screenshots/00-workflow.gif)
+
 ![HouseCheck Building Health Card](./screenshots/01-health-card.png)
 
 ---
