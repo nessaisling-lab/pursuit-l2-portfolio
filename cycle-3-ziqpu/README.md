@@ -10,9 +10,13 @@ data, read back in plain language, and never dressed up as fate.
 ![Ziqpu birth moment](./screenshots/02-birth-moment.png)
 ![Ziqpu offline city search](./screenshots/03-offline-city-search.png)
 
-*Driven with **Anthropic's own founding date** — 1 January 2021, San Francisco, time deliberately
-left unknown because I do not know the incorporation hour. Which is exactly the case the app is
-built for.*
+*Driven with **Anthropic's own founding date — 26 January 2021**, San Francisco, California,
+United States. Anthropic is a Delaware public benefit corporation headquartered in San Francisco;
+the date is [publicly documented](https://en.wikipedia.org/wiki/Anthropic), the incorporation
+**hour is not**. So the time is marked unknown — and the app responds by withholding the
+Ascendant and Midheaven and lowering its confidence one band, rather than guessing them. Filling
+in a plausible-looking time would have produced two angles that look like measurements and are
+not, which is the exact failure the two-agent split exists to prevent.*
 
 > *"An unknown time is honest: the angles are withheld, not guessed."* — the app's own copy on
 > the birth-details screen. The same rule the rest of these builds follow: an absent answer is

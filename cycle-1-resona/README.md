@@ -5,7 +5,7 @@ and file transcription, entirely on-device via whisper.cpp.
 
 **[Source](https://github.com/nessaisling-lab/L2-Project-Resona)**
 
-> **Screenshot needed** — see [screenshots/README.md](./screenshots/README.md).
+![Resona](./screenshots/01-main.png)
 
 ---
 
@@ -55,3 +55,8 @@ Rust · Tauri 2 · whisper-rs (whisper.cpp) · cpal · React · TypeScript
 
 Feature-complete and **uninstallable** — no signed release build yet, so running it means
 compiling from source with a C toolchain and CMake. Same honest wall as Cycle 2.
+
+*The screenshot above is the real interface, served from the project's built `dist/`. Because
+Tauri renders its UI as a web view, the frontend runs in a browser without the Rust core
+attached — which is enough to show the interface honestly, and is why this shot exists without
+a 30-minute whisper.cpp compile.*
