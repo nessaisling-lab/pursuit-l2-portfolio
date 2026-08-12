@@ -33,6 +33,8 @@ words, with how long each has been open. The card refuses to imply more than it 
 building with no Class C violations and a floor-level score gets a sentence reconciling the two,
 because a count read alone can be read backwards.
 
+![Repair speed on a building that fixes nothing](./screenshots/04-repair-speed.png)
+
 **Repair speed.** Median days from a violation being issued to being closed. The only measure
 on the card describing *behaviour* rather than state — two buildings can show identical open
 counts while one fixes things in three weeks and the other in three years. Three states, not

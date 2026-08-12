@@ -8,6 +8,11 @@ data, read back in plain language, and never dressed up as fate.
 
 ![Ziqpu welcome](./screenshots/01-welcome.png)
 ![Ziqpu birth moment](./screenshots/02-birth-moment.png)
+![Ziqpu offline city search](./screenshots/03-offline-city-search.png)
+
+*Driven with **Anthropic's own founding date** — 1 January 2021, San Francisco, time deliberately
+left unknown because I do not know the incorporation hour. Which is exactly the case the app is
+built for.*
 
 > *"An unknown time is honest: the angles are withheld, not guessed."* — the app's own copy on
 > the birth-details screen. The same rule the rest of these builds follow: an absent answer is
