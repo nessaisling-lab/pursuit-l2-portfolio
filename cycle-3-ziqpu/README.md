@@ -6,7 +6,12 @@ data, read back in plain language, and never dressed up as fate.
 
 **[Source](https://github.com/nessaisling-lab/Ziqpu-L2-Cycle-3)**
 
-> **Screenshot needed** — see [screenshots/README.md](./screenshots/README.md).
+![Ziqpu welcome](./screenshots/01-welcome.png)
+![Ziqpu birth moment](./screenshots/02-birth-moment.png)
+
+> *"An unknown time is honest: the angles are withheld, not guessed."* — the app's own copy on
+> the birth-details screen. The same rule the rest of these builds follow: an absent answer is
+> stated, never filled in.
 
 ---
 

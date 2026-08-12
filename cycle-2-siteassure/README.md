@@ -1,12 +1,15 @@
 # SiteAssure — Cycle 2
 
-**A tamper-evident compliance logger for OSHA site records.** Safety records are only worth what
-their provenance is worth, so the log is append-only and every entry is chained to the one
-before it.
+**A tamper-evident, offline-first compliance logger for OSHA site records — driven by voice.**
+Safety records are only worth what their provenance is worth, so the log is append-only and every
+entry is chained to the one before it.
+
+*Field ops. Offline first. Speak it. Flag it. Prove it.*
 
 **[Source](https://github.com/nessaisling-lab/L2-C2-Solution)** *(in `siteassure/`)*
 
-> **Screenshot needed** — see [screenshots/README.md](./screenshots/README.md).
+![SiteAssure daily log](./screenshots/01-daily-log.png)
+![SiteAssure audit trail](./screenshots/02-audit-trail.png)
 
 ---
 
@@ -47,9 +50,17 @@ The application is feature-complete — 18 commands, all wired, zero stubs — a
 there is no signed installer yet, so running it means building from source. That is the honest
 status and it is tracked as the next task rather than hidden.
 
-## Known issue with this repo
+## Where it came from
 
-**The repository README currently describes a different project.** `L2-C2-Solution` holds both
-the earlier Whisper Notes clone (`wisper/`) and SiteAssure (`siteassure/`), and the front page
-still describes only the clone. Anyone landing there never learns SiteAssure exists. Fixing that
-README is the highest-value thing I can do to this repo and it is not code.
+Cycle 2 began as a **Whisper Notes clone** — on-device transcription, built with
+[Jimmy Ong](https://github.com/jimmyronin). SiteAssure is what that became when the question
+changed from *can I transcribe this* to *what is transcription actually for*. The answer was a
+construction foreman who cannot type on a site and whose spoken record has to hold up later.
+
+That lineage is why the app opens on a microphone rather than a form, and why the audit trail
+exists at all: the moment a voice note becomes a legal record, the interesting problem stops
+being accuracy and starts being provenance.
+
+**Known issue with the repo:** `L2-C2-Solution` still holds both `wisper/` and `siteassure/`, and
+its README describes only the clone — so anyone landing there never learns SiteAssure exists.
+Fixing that README is the highest-value change available to that repo, and it is not code.
