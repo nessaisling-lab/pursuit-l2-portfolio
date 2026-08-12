@@ -1,6 +1,7 @@
 # Pursuit L2 — four cycles, four shipped products
 
 **Stan (Aisling) Leiva-Davila** · AI-Native Builder, inaugural cohort
+**[nessaisling-lab.github.io/pursuit-l2-portfolio](https://nessaisling-lab.github.io/pursuit-l2-portfolio/)**
 [ness.aisling@gmail.com](mailto:ness.aisling@gmail.com) · [LinkedIn](https://linkedin.com/in/stan-leiva-davila) · [github.com/nessaisling-lab](https://github.com/nessaisling-lab)
 
 Four builds across seven months. Every one runs. Two are live on the internet right now, two
