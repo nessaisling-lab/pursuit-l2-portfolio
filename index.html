@@ -73,7 +73,7 @@ h2.sec{
 @media(min-width:900px){.builds{grid-template-columns:repeat(2,1fr);gap:24px}}
 @media(min-width:900px){.build:first-child{grid-column:1/-1}}
 @media(min-width:900px){.build:first-child{display:grid;grid-template-columns:1fr 1.15fr;align-items:stretch}}
-@media(min-width:900px){.build:first-child .shot{border-top:0;border-left:1px solid var(--rule);height:100%;object-fit:cover}}
+@media(min-width:900px){.build:first-child .shot{border-top:0;border-left:1px solid var(--rule);height:100%;max-height:none;object-fit:cover;object-position:center}}
 .build{
   display:grid;grid-template-columns:1fr;gap:0;text-decoration:none;color:inherit;
   background:var(--bg-2);border:1px solid var(--rule);border-radius:4px;overflow:hidden;
@@ -92,7 +92,11 @@ h2.sec{
 }
 .tag.live{background:rgba(94,204,121,.14);color:var(--green-lite)}
 .tag.live::before{content:"● ";color:var(--green-lite)}
-.shot{display:block;width:100%;border-top:1px solid var(--rule);background:#000}
+.shot{display:block;width:100%;border-top:1px solid var(--rule);background:#000;
+  /* portrait captures (SiteAssure is 420x885) would otherwise triple a card's height and
+     wreck the grid, so every shot is cropped to a consistent band from the top. */
+  max-height:320px;object-fit:cover;object-position:top center}
+.build{align-content:start}
 
 /* ── the argument ─────────────────────────────────────────── */
 .pull{
