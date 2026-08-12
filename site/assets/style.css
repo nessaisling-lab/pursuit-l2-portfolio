@@ -98,8 +98,46 @@ h2.sec.far{margin-top:clamp(56px,9vw,88px)}
 /* A hairline bezel in the card's own edge colour, not a photoreal device body.
    It exists only to make the portrait aspect read as deliberate; drawn phone
    mockups are a template signal. */
-.bezel{border:1px solid var(--edge);border-radius:10px;overflow:hidden;line-height:0;max-width:100%}
+.bezel{position:relative;border:1px solid var(--edge);border-radius:10px;overflow:hidden;line-height:0;max-width:100%}
 .shot{display:block;width:100%;height:auto}
+
+/* ── enlarge ──────────────────────────────────────────────────────────────
+   Hidden until pager.js upgrades the page: with no script there is no dialog
+   to open, and an affordance that does nothing is worse than none. */
+.zoom{display:none}
+[data-paged] .zoom{
+  display:flex;align-items:flex-end;justify-content:center;
+  position:absolute;inset:0;border:0;padding:0 0 14px;cursor:zoom-in;
+  background:none;font:inherit;opacity:0;transition:opacity .18s ease
+}
+[data-paged] .zoom:hover,[data-paged] .zoom:focus-visible{opacity:1}
+[data-paged] .zoom:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.zoom-hint{
+  font:500 .64rem/1 "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--surface);background:var(--accent);padding:6px 11px;border-radius:2px
+}
+
+/* The lightbox is one element reused by every card, appended by the script. */
+.lightbox{
+  border:0;padding:0;background:none;max-width:min(94vw,1100px);max-height:92vh;
+  overflow:visible
+}
+.lightbox::backdrop{background:rgba(8,8,10,.86)}
+/* Drive from height and let width follow. Leaving both auto caps the video at its
+   intrinsic size -- these recordings are 440-1100px wide, so "enlarged" came out
+   barely larger than the card it opened from. */
+.lightbox video{
+  display:block;height:min(86vh,900px);width:auto;
+  max-width:94vw;max-height:86vh;
+  border:1px solid rgba(245,241,230,.22);border-radius:10px;background:#000
+}
+.lb-close{
+  position:absolute;top:-14px;right:-14px;width:34px;height:34px;border-radius:50%;
+  border:1px solid rgba(245,241,230,.28);background:var(--bg);color:var(--ink);
+  font:400 1.15rem/1 system-ui;cursor:pointer
+}
+.lb-close:hover{border-color:var(--vermilion);color:var(--vermilion)}
+.lb-close:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
 .media[data-media="portrait"] .bezel{width:min(230px,62%)}
 .media[data-media="landscape"] .bezel{width:100%}
 

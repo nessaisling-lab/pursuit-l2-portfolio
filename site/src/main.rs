@@ -240,6 +240,17 @@ fn BuildCard(b: &'static Build) -> Element {
                         preload: if b.lead { "auto" } else { "metadata" },
                         "aria-label": "{b.alt}",
                     }
+                    // A real button rather than a click handler on the video, so the
+                    // enlarge is reachable by keyboard and announced. Hidden until the
+                    // script upgrades it -- with no JS there is nothing to open.
+                    button {
+                        class: "zoom",
+                        "type": "button",
+                        "data-zoom": "{b.video}",
+                        "data-poster": "{b.poster}",
+                        "aria-label": "Enlarge the {b.name} demo",
+                        span { class: "zoom-hint", "Enlarge" }
+                    }
                 }
             }
             div { class: "panel",

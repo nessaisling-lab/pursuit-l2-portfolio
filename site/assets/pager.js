@@ -66,4 +66,68 @@
       v.pause();
     });
   }
+
+  /* ── enlarge ────────────────────────────────────────────────────────────
+   * A native <dialog>, not a hand-rolled overlay: showModal() gives the
+   * backdrop, the focus trap, Escape-to-close and inert-behind for free, and
+   * gets them right in ways a div rebuild usually does not.
+   *
+   * The morph is the View Transitions API. Giving the card video and the
+   * dialog video the same view-transition-name makes the browser tween between
+   * the two boxes instead of popping. Where it is unsupported the dialog just
+   * opens instantly -- same behaviour, no animation, nothing to feature-detect
+   * beyond the one call. */
+  var dlg = document.createElement('dialog');
+  dlg.className = 'lightbox';
+  var big = document.createElement('video');
+  big.muted = true; big.loop = true; big.playsInline = true; big.controls = true;
+  var close = document.createElement('button');
+  close.type = 'button'; close.className = 'lb-close';
+  close.setAttribute('aria-label', 'Close'); close.textContent = '×';
+  dlg.appendChild(big); dlg.appendChild(close);
+  document.body.appendChild(dlg);
+
+  var NAME = 'zoomed';
+  var origin = null;
+
+  function swap(fn) {
+    // startViewTransition takes a callback that mutates the DOM; without support
+    // we just run it. Either way the same code path produces the same end state.
+    if (document.startViewTransition && !still) document.startViewTransition(fn);
+    else fn();
+  }
+
+  function open(btn) {
+    var card = btn.closest('.build');
+    origin = card ? card.querySelector('video.shot') : null;
+    big.src = btn.getAttribute('data-zoom');
+    big.poster = btn.getAttribute('data-poster');
+    if (origin) origin.style.viewTransitionName = NAME;
+    swap(function () {
+      if (origin) origin.style.viewTransitionName = '';
+      big.style.viewTransitionName = NAME;
+      dlg.showModal();
+      if (!still) big.play().catch(function () {});
+    });
+  }
+
+  function shut() {
+    swap(function () {
+      big.style.viewTransitionName = '';
+      if (origin) origin.style.viewTransitionName = NAME;
+      dlg.close();
+    });
+    // hand the name back after the transition so the card video is paintable again
+    setTimeout(function () { if (origin) origin.style.viewTransitionName = ''; }, 400);
+    big.pause();
+  }
+
+  [].slice.call(document.querySelectorAll('.zoom')).forEach(function (btn) {
+    btn.addEventListener('click', function () { open(btn); });
+  });
+  close.addEventListener('click', shut);
+  // Escape already closes a modal dialog; this catches the click-outside case,
+  // which <dialog> does not handle on its own.
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) shut(); });
+  dlg.addEventListener('close', function () { big.pause(); });
 })();
