@@ -1,0 +1,8 @@
+# These files are inputs to, or output of, a build that runs on both Windows (locally)
+# and Linux (CI). git's autocrlf would hand Windows a CRLF working copy and Linux an LF
+# one; because site/assets/* are include_str!'d straight into the generated page, the
+# two platforms would then render byte-different HTML and the CI sync check could never
+# pass on both. Pinning LF everywhere makes the render reproducible across platforms.
+index.html      text eol=lf
+site/assets/*   text eol=lf
+site/src/*.rs   text eol=lf
