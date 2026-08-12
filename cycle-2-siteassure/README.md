@@ -8,6 +8,8 @@ entry is chained to the one before it.
 
 **[Source](https://github.com/nessaisling-lab/L2-C2-Solution)** *(in `siteassure/`)*
 
+![SiteAssure: speak it, record it, prove it](./screenshots/00-workflow.gif)
+
 ![SiteAssure daily log](./screenshots/01-daily-log.png)
 ![SiteAssure audit trail](./screenshots/02-audit-trail.png)
 
@@ -39,6 +41,14 @@ made the Cycle 4 capstone worth building.
   kill-switch, so a new call site cannot quietly reach the internet by default
 - **CI across three operating systems** — GitHub Actions matrix, green on Windows and macOS
 - **MIT licensed**, crediting both authors
+
+![SiteAssure trade-risk dashboard](./screenshots/03-trade-risk.png)
+
+**A back-office view the field app earns.** Because every capture is timestamped and chained,
+the same records support a trade-risk dashboard without any extra data entry: open flags,
+records this week, **audit integrity at 100%**, average capture time, and a trade benchmark
+against OSHA enforcement weights for NAICS 23 in the NY–Newark–Jersey City market. The point is
+that none of it is separately maintained — it is the audit log, read a second way.
 
 ## Tech stack
 
